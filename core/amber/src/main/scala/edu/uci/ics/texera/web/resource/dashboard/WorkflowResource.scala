@@ -34,10 +34,11 @@ class WorkflowResource {
     * @return Workflow[]
     */
   @GET
-  @Path("/get") def getUserWorkflow(@Session session: HttpSession): util.List[Workflow] = {
+  @Path("/get")
+  def getUserWorkflow(@Session session: HttpSession): util.List[Workflow] = {
     val user = UserResource.getUser(session)
     if (user == null) return new util.ArrayList[Workflow]() {}
-    getWorkflowsByUser(user.getUserID)
+    getWorkflowsByUser(user.getUid)
   }
 
   /**
@@ -50,7 +51,8 @@ class WorkflowResource {
     * @return a json string representing an savedWorkflow
     */
   @GET
-  @Path("/get/{workflowID}") def getWorkflow(
+  @Path("/get/{workflowID}")
+  def getWorkflow(
       @PathParam("workflowID") workflowID: UInteger,
       @Session session: HttpSession
   ): Workflow = workflowDao.fetchOneByWid(workflowID)
@@ -77,7 +79,7 @@ class WorkflowResource {
     if (user == null) return null
     if (wfId != null) return updateWorkflow(wfId, name, content)
     val workflow = insertWorkflowToDataBase(name, content)
-    workflowOfUserDao.insert(new WorkflowOfUser(user.getUserID, workflow.getWid))
+    workflowOfUserDao.insert(new WorkflowOfUser(user.getUid, workflow.getWid))
     workflow
   }
 
